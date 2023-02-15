@@ -42,12 +42,6 @@ impl AppUsageManager {
             SINGLETON.assume_init_ref().clone()
         }
     }
-
-    pub fn get_procs_since_last_access(&mut self) -> HashMap<String, Process> {
-        let res = self.procs_since_last_access.clone();
-        self.procs_since_last_access.clear();
-        res
-    }
 }
 
 pub fn start_monitoring() {

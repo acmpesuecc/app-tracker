@@ -28,7 +28,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "me.rohith.app-tracker",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -60,6 +60,10 @@
         "title": "app-tracker",
         "width": 800
       }
-    ]
+    ],
+    "systemTray": {
+      "iconPath": "icons/icon.png",
+      "iconAsTemplate": true
+    }
   }
 }

@@ -33,10 +33,13 @@ export function RootContextProvider({children}: PropsWithChildren) {
             let proc_map: ProcessMap = await invoke("get_processes");
 
             setProcMap(proc_map);
-            procMapRef.current = procMap
+            procMapRef.current = proc_map; 
         })();
         
         let interv = setInterval(async () => {
+            if (Object.keys(procMapRef.current).length == 0)
+                return;
+
             let proc_list_update: ProcessMap = await invoke("get_process_list_update");
             
             let new_proc_list = Object.assign({}, procMapRef.current);
