@@ -3,61 +3,37 @@
     windows_subsystem = "windows"
 )]
 
-use std::collections::HashMap;
+mod app_tracker;
 
-mod app_usage;
+use std::sync::{Arc, Mutex};
 
-use active_win_pos_rs::get_active_window;
-use app_usage::{AppUsageManager, Process};
+use app_tracker::{
+    get_current_app, get_tracked_apps, start_monitoring, AppTracker
+};
+
 use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu};
-//https://tauri.app/v1/guides/features/command
 
-#[tauri::command]
-fn get_processes() -> HashMap<String, Process> {
-    let mutex = AppUsageManager::get_mutex();
-    let mut app_mgr = mutex.lock().unwrap();
-
-    app_mgr.procs_since_last_access.clear();
-    app_mgr.apps.clone()
-}
-
-#[tauri::command]
-fn get_process_list_update() -> HashMap<String, Process> {
-    let mutex = AppUsageManager::get_mutex();
-    let mut app_mgr = mutex.lock().unwrap();
-
-    let res = app_mgr.procs_since_last_access.clone();
-    app_mgr.procs_since_last_access.clear();
-    res
-}
-
-#[tauri::command]
-fn get_active_process() -> Option<Process> {
-    if let Ok(win) = get_active_window() {
-        let proc = Process {
-            name: win.process_name,
-            pid: win.process_id,
-            window_title: win.title,
-            usage: 0,
-        };
-        return Some(proc);
-    }
-
-    return None;
-}
 fn main() {
+    let app_tracker = AppTracker::new();
+    let mutex = Arc::new(Mutex::new(app_tracker));
+
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let tray_menu = SystemTrayMenu::new().add_item(quit);
 
     tauri::Builder::default()
-        .setup(|_app| {
-            app_usage::start_monitoring();
+        .manage(mutex.clone())
+        .setup(move |app| {
+            let app_handle = app.app_handle();
+            start_monitoring(mutex.clone(), move|tracker_update| {
+                if let Some(win) = app_handle.get_window("main") {
+                    win.emit("tracking-update", tracker_update).unwrap();
+                }
+            });
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            get_processes,
-            get_active_process,
-            get_process_list_update
+            get_tracked_apps,
+            get_current_app,
         ])
         .system_tray(SystemTray::new().with_menu(tray_menu))
         .on_system_tray_event(|app, event| match event {

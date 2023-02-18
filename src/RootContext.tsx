@@ -1,65 +1,70 @@
 import { invoke } from "@tauri-apps/api/tauri";
+import { appWindow } from "@tauri-apps/api/window";
 import { createContext, PropsWithChildren, useEffect, useRef, useState } from "react";
-import { UPDATE_INTERVAL } from "./constants";
 
 type ProcessMap = {
-    [key : string] : Process
-}
+	[key: string]: Process;
+};
 
 export type Process = {
-    name: string,
-    window_title: string,
-    pid: number,
-    usage: number
-}
+	name: string;
+	window_title: string;
+	pid: number;
+	usage: number;
+};
 
 export type RootCtx = {
-    tracked_processes: ProcessMap
-}
+	tracked_processes: ProcessMap;
+};
 
-export let RootContext = createContext<RootCtx>({tracked_processes : {}});
+export let RootContext = createContext<RootCtx>({ tracked_processes: {} });
 
-export function RootContextProvider({children}: PropsWithChildren) {
-    let [procMap, setProcMap] = useState<ProcessMap>({}); 
-    
-    // have to use a ref here to persist a reference to
-    // procMap. [the setInterval() captures the procMap reference
-    // returned by useState() during the initial render and uses that 
-    // on subsequent executions]
-    let procMapRef = useRef(procMap);
+export function RootContextProvider({ children }: PropsWithChildren) {
+	let [procMap, setProcMap] = useState<ProcessMap>({});
 
-    useEffect(() => {
-        (async () => {
-            let proc_map: ProcessMap = await invoke("get_processes");
+	// have to use a ref here to persist a reference to
+	// procMap. [the setInterval() captures the procMap reference
+	// returned by useState() during the initial render and uses that
+	// on subsequent executions]
+	let procMapRef = useRef(procMap);
 
-            setProcMap(proc_map);
-            procMapRef.current = proc_map; 
-        })();
-        
-        let interv = setInterval(async () => {
-            if (Object.keys(procMapRef.current).length == 0)
-                return;
+	useEffect(() => {
+		let unlisten: Promise<() => void> | null = null;
 
-            let proc_list_update: ProcessMap = await invoke("get_process_list_update");
-            
-            let new_proc_list = Object.assign({}, procMapRef.current);
-            Object.values(proc_list_update).forEach((p) => {
-                new_proc_list[p.name] = p;
-            });
+		(async () => {
+			let proc_map: ProcessMap = await invoke("get_tracked_apps");
 
-            setProcMap(new_proc_list);
-            procMapRef.current = new_proc_list;
-        }, UPDATE_INTERVAL * 1000)
-        
-        return () => {
-            //cleanup
-            clearInterval(interv);
-        }
-    }, [])
+			setProcMap(proc_map);
+			procMapRef.current = proc_map;
+		})();
 
-    return (
-        <RootContext.Provider value={{tracked_processes: procMap}}>
-            {children}
-        </RootContext.Provider>
-    )
+		(async () => {
+			unlisten = appWindow.listen("tracking-update", (event) => {
+				console.log(event.payload);
+				if (Object.keys(procMapRef.current).length == 0) return;
+
+				let proc_list_update: ProcessMap = event.payload as ProcessMap;
+
+				let new_proc_list = Object.assign({}, procMapRef.current);
+				Object.values(proc_list_update).forEach((p) => {
+					new_proc_list[p.name] = p;
+				});
+
+				setProcMap(new_proc_list);
+				procMapRef.current = new_proc_list;
+			});
+		})();
+
+		return () => {
+			//cleanup
+			if (unlisten) {
+				(async () => {
+					let removelistener = await unlisten;
+					removelistener();
+				})();
+			}
+		};
+	}, []);
+
+	return <RootContext.Provider value={{ tracked_processes: procMap }}>{children}</RootContext.Provider>;
 }
