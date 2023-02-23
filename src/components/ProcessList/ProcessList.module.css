@@ -16,11 +16,9 @@
 	line-height: 45px;
 	flex: 1;
 }
-.table-head tr {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
+.process-list tr {
+	display: table;
+	width: 100%;
 }
 
 /* make body scrollable */
@@ -54,9 +52,6 @@
 	padding-bottom: 20px;
 	padding-top: 20px;
 	font-weight: 300;
-}
-.table-body tr {
-	margin-bottom: 5px;
 }
 .table-body tr:hover {
 	background-color: #1c1c1c88;

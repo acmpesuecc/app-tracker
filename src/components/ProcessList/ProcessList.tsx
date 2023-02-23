@@ -32,8 +32,8 @@ export function ProcessList() {
 		<table className={styles["process-list"]}>
 			<thead className={styles["table-head"]}>
 				<tr className="head-row">
-					<th className="PID">PID</th>
-					<th className="Name">Process name</th>
+					<th className="pid">PID</th>
+					<th className="name" style={{width: "40%"}}>Process name</th>
 					<th className="usage">Uptime</th>
 					<th className="percent-usage">Usage%</th>
 				</tr>
@@ -46,7 +46,7 @@ export function ProcessList() {
 					.map((p, idx) => (
 						<tr className="process-row" key={idx}>
 							<td className="process-pid">{p.pid.toString()}</td>
-							<td className="process-name">{p.name}</td>
+							<td className="process-name" style={{width: "40%"}}>{p.name}</td>
 							<td className="process-usage">{`${formatTime(p.usage ?? 0)}`}</td>
 							<td className="process-percent-usage">{`${(((p.usage ?? 0) / total_usage) * 100).toFixed(
 								2
