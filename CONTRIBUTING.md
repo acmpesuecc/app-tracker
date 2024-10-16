@@ -1,4 +1,4 @@
-# Participiant: How to Contribute
+# Participant: How to Contribute
 
 1. **Visit the HackNight 6.0 Leaderboard**:
    Browse the leaderboard and choose a repository you'd like to contribute to!
@@ -12,10 +12,23 @@
 
    ```bash
    git clone git@github.com:your-username/app-tracker.git
+   cd app-tracker
+   ```
+
+   - Install dependencies
+     
+   ```bash
+   npm install
+   ```
+   
+   - Run the development server.
+     
+   ```bash
+   npm run tauri dev
    ```
 
 4. **Make Your Changes**
-   After cloning and setting up your branch, make the necessary changes to the code in your IDE.
+   After cloning and setting up your branch, make the necessary changes to the code in your IDE. If you're unfamiliar with Tauri, the [docs](https://v1.tauri.app/v1/guides/) is a good place to start.
 
 5. **Commit and Push**:
    Commit your changes and push them to your fork:

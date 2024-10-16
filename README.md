@@ -10,7 +10,11 @@ A simple application that lets you monitor usage of apps on your PC.
 - View a list of tracked processes with details such as PID, process name, uptime, and usage percentage.
 - System tray integration for easy access.
 
-## Installation
+## For contributors
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## Building
 
 ### Prerequisites
 
@@ -34,10 +38,6 @@ A simple application that lets you monitor usage of apps on your PC.
     ```sh
     npm run tauri build
     ```
-
-## For contributors
-
-Read [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
 
