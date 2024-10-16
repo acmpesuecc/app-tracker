@@ -5,7 +5,7 @@ version = 3
 [[package]]
 name = "active-win-pos-rs"
 version = "0.7.1"
-source = "git+https://github.com/xXRSTCXx/active-win-pos-rs?branch=uwp#1cfa4d14e80c8500cbdbb9645d72719629ec9702"
+source = "git+https://github.com/roh1th-s/active-win-pos-rs?branch=uwp#1cfa4d14e80c8500cbdbb9645d72719629ec9702"
 dependencies = [
  "appkit-nsworkspace-bindings",
  "core-foundation",
@@ -65,7 +65,7 @@ dependencies = [
 [[package]]
 name = "appkit-nsworkspace-bindings"
 version = "0.1.1"
-source = "git+https://github.com/xXRSTCXx/active-win-pos-rs?branch=uwp#1cfa4d14e80c8500cbdbb9645d72719629ec9702"
+source = "git+https://github.com/roh1th-s/active-win-pos-rs?branch=uwp#1cfa4d14e80c8500cbdbb9645d72719629ec9702"
 dependencies = [
  "bindgen",
  "objc",
