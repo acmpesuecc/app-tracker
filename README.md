@@ -35,6 +35,10 @@ A simple application that lets you monitor usage of apps on your PC.
     npm run tauri build
     ```
 
+## For contributors
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md)
+
 ## License
 
 MIT
